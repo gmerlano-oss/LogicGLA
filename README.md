@@ -1,0 +1,2 @@
+# LogicGLA
+Práctica lógica matemática 
