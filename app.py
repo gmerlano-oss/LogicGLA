@@ -1,33 +1,44 @@
 import streamlit as st
-import pandas as pd
 
-st.set_page_config(page_title="Lógica Matemática", page_icon="🧠")
+st.set_page_config(page_title="Lógica Proposicional", page_icon="⚖️")
 
-st.title("🧠 Entrenador de Lógica")
-st.write("Selecciona los valores de P y Q para ver los resultados.")
+st.title("⚖️ Práctica de Reglas de Inferencia")
 
-# Interfaz de usuario
-col_input1, col_input2 = st.columns(2)
-with col_input1:
-    p = st.toggle("Proposición P", value=True)
-with col_input2:
-    q = st.toggle("Proposición Q", value=False)
+# Diccionario de reglas para el modo práctica
+reglas = {
+    "Modus Ponendo Ponens": "Si P → Q es verdad, y P es verdad, entonces Q es verdad.",
+    "Modus Tollendo Tollens": "Si P → Q es verdad, y ¬Q es verdad, entonces ¬P es verdad.",
+    "Doble Negación": "¬(¬P) es equivalente a P.",
+    "Tautología": "Una fórmula que siempre es verdadera (ej: P ∨ ¬P)."
+}
 
-st.divider()
+modo = st.sidebar.radio("Selecciona modo:", ["Explorador", "Desafío de Reglas"])
 
-# Cálculos
-st.subheader("Resultados Lógicos")
-c1, c2, c3 = st.columns(3)
-c1.metric("P ∧ Q (AND)", "V" if p and q else "F")
-c2.metric("P ∨ Q (OR)", "V" if p or q else "F")
-c3.metric("P ⊕ Q (XOR)", "V" if p ^ q else "F")
+if modo == "Explorador":
+    st.subheader("Simulador de Reglas Básicas")
+    p = st.toggle("P (Verdadero)")
+    
+    st.write(f"**Doble Negación:** ¬(¬P) es **{p}**")
+    st.write(f"**Tautología (P ∨ ¬P):** Siempre es **True**")
 
-# Tabla de verdad interactiva
-if st.checkbox("Mostrar Tabla de Verdad"):
-    data = [
-        {"P": True, "Q": True, "AND": True, "OR": True},
-        {"P": True, "Q": False, "AND": False, "OR": True},
-        {"P": False, "Q": True, "AND": False, "OR": True},
-        {"P": False, "Q": False, "AND": False, "OR": False},
+    st.divider()
+    st.info("💡 Consejo: El Ponens 'pone' (afirma el consecuente), el Tollens 'tolle' (niega el antecedente).")
+
+else:
+    st.subheader("¿Qué regla se está aplicando?")
+    
+    ejercicios = [
+        {"pregunta": "Premisa 1: Si llueve, hay nubes. Premisa 2: Llueve. Conclusión: Hay nubes.", "correcta": "Modus Ponendo Ponens"},
+        {"pregunta": "Premisa 1: Si estudio, apruebo. Premisa 2: No aprobé. Conclusión: No estudié.", "correcta": "Modus Tollendo Tollens"},
+        {"pregunta": "No es cierto que no soy estudiante. Conclusión: Soy estudiante.", "correcta": "Doble Negación"}
     ]
-    st.table(pd.DataFrame(data))
+    
+    for i, ej in enumerate(ejercicios):
+        st.write(f"**Ejercicio {i+1}:** {ej['pregunta']}")
+        opcion = st.selectbox("Selecciona la regla:", ["Selecciona...", "Modus Ponendo Ponens", "Modus Tollendo Tollens", "Doble Negación"], key=f"ex_{i}")
+        
+        if opcion != "Selecciona...":
+            if opcion == ej['correcta']:
+                st.success("¡Correcto!")
+            else:
+                st.error("Sigue intentando.")
